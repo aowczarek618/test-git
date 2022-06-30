@@ -31,10 +31,11 @@ def git_commit_and_push():
                 print("pull_err.output=", pull_err.output)
                 print("output=", output)
                 conflicted_ims = re.search(
-                    r"CONFLICT (content): Merge conflict in (.*ims2)", str(pull_err.output))
+                    r"CONFLICT (content): Merge conflict in (.*ims2)", str(output))
                 if conflicted_ims is not None:
                     print("WARNING: Found conflicting configuration. Reverting it...")
                     _run_git_command(f"git checkout --ours {conflicted_ims.group(1)}")
+                    _run_git_command(f"git add {conflicted_ims.group(1)}")
                     _run_git_command("git rebase --continue")
                 else:
                     raise Exception(f"Error while pushing (reason: {pull_err.output})")
