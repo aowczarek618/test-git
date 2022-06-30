@@ -1,3 +1,12 @@
+import conf
+import subprocess
+import re
+
+
+COMMIT_TRIES=10
+MSG="AUTOMATIC COMMIT"
+
+
 def git_commit_and_push():
     """Run git commit and push it to the repository
     
@@ -9,24 +18,27 @@ def git_commit_and_push():
 
     for _ in range(COMMIT_TRIES):
         print("Commiting...")
-        _run_git_command(f"git commit -am {MSG}")
+        _run_git_command(f"git commit -am '{MSG}'")
         try:
             print("Pushing to the repository...")
             _run_git_command(f"git push origin {conf.BRANCH}")
-        except OSError as e:
-            raise Exception(f"Error while pushing (reason: {e})")
-        except subprocess.CalledProcessError as e:
-            output = _run_git_command_check_output("git pull --rebase")
-            conflicted_ims = re.search(
-                r"CONFLICT (content): Merge conflict in (.*ims2)", str(e.output))
-            if conflicted_ims is not None:
-                print("WARNING: Found conflicting configuration. Reverting it...")
-                _run_git_command(f"git checkout --ours {conflicted_ims.group(1)}")
-                _run_git_command("git rebase --continue")
-            else:
-                raise Exception(f"Error while pushing (reason: {e.output})")
+        except OSError as push_err:
+            raise Exception(f"Error while pushing (reason: {push_err})")
+        except subprocess.CalledProcessError:
+            try:
+                output = _run_git_command_check_output("git pull --rebase")
+            except subprocess.CalledProcessError as pull_err:
+                print("pull_err.output=", pull_err.output)
+                print("output=", output)
+                conflicted_ims = re.search(
+                    r"CONFLICT (content): Merge conflict in (.*ims2)", str(pull_err.output))
+                if conflicted_ims is not None:
+                    print("WARNING: Found conflicting configuration. Reverting it...")
+                    _run_git_command(f"git checkout --ours {conflicted_ims.group(1)}")
+                    _run_git_command("git rebase --continue")
+                else:
+                    raise Exception(f"Error while pushing (reason: {pull_err.output})")
         else:
-            print(output)
             break
 
 
