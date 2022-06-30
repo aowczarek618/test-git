@@ -19,18 +19,19 @@ def git_commit_and_push():
     _run_git_command(f"git commit -am '{MSG}'")
     try:
         print("Pushing to the repository...")
-        _run_git_command(f"git push origin {conf.BRANCH}")
+        _run_git_command_check_output(f"git push origin {conf.BRANCH}")
     except OSError as push_err:
         raise Exception(f"Error while pushing (reason: {push_err})")
     except subprocess.CalledProcessError:
         try:
-            _run_git_command_check_output("git pull --rebase")
+            output = _run_git_command_check_output("git pull --rebase")
         except subprocess.CalledProcessError as pull_err:
             print("pull_err.output=", pull_err.output)
             print("pull_err.returncode=", pull_err.returncode)
             print("pull_err.cmd=", pull_err.cmd)
             print("pull_err.stdout=", pull_err.stdout)
             print("pull_err.stderr=", pull_err.stderr)
+            print("output=", output)
             conflicted_ims = re.search(
                 r"CONFLICT (content): Merge conflict in (.*ims2)", str(pull_err.output))
             print("conflicted_ims=", conflicted_ims)
