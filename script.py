@@ -25,14 +25,13 @@ def git_commit_and_push():
         raise Exception(f"Error while pushing (reason: {push_err})")
     except subprocess.CalledProcessError:
         try:
-            output = _run_git_command_check_output("git pull --rebase")
+            _run_git_command_check_output("git pull --rebase")
         except subprocess.CalledProcessError as pull_err:
             print("pull_err.output=", pull_err.output)
             print("pull_err.returncode=", pull_err.returncode)
             print("pull_err.cmd=", pull_err.cmd)
             print("pull_err.stdout=", pull_err.stdout)
             print("pull_err.stderr=", pull_err.stderr)
-            print("output=", output)
             conflicted_ims = re.search(
                 r"CONFLICT (content): Merge conflict in (.*ims2)", str(pull_err.output))
             print("conflicted_ims=", conflicted_ims)
@@ -54,13 +53,12 @@ def _run_git_command(cmd):
         shell=True,
         executable="/bin/bash",
     )
-    process.communicate()
+    output, error = process.communicate()
+    return output, error
 
 def _run_git_command_check_output(cmd):
     return subprocess.check_output(
         cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
         shell=True,
         executable="/bin/bash",
     )
