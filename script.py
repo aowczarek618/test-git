@@ -1,3 +1,4 @@
+from sys import stdout
 import conf
 import subprocess
 import re
@@ -48,6 +49,7 @@ def git_commit_and_push():
 def _run_git_command(cmd):
     process = subprocess.Popen(
         cmd,
+        stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         shell=True,
         executable="/bin/bash",
@@ -56,7 +58,8 @@ def _run_git_command(cmd):
 
 def _run_git_command_check_output(cmd):
     return subprocess.check_output(
-        f"git pull --rebase",
+        cmd,
+        stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         shell=True,
         executable="/bin/bash",
