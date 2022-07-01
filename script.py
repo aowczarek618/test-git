@@ -40,7 +40,7 @@ def git_commit_and_push():
                 print("WARNING: Found conflicting configuration. Reverting it...")
                 _run_git_command(f"git checkout --ours {' '.join(conflicted_ims_files)}")
                 _run_git_command(f"git add {' '.join(conflicted_ims_files)}")
-                _run_git_command(f"git rebase -m {MSG} --continue")
+                _run_git_command(f"git rebase -m '{MSG}' --continue")
                 _run_git_command(f"git push origin {conf.BRANCH}")
             else:
                 raise Exception(f"Error while pushing (reason: {pull_err.output})")
