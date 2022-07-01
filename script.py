@@ -35,6 +35,7 @@ def git_commit_and_push():
             conflicted_ims_files = re.findall(
                 r"CONFLICT \(content\): Merge conflict in (.*ims2)", pull_err.output.decode('utf-8'))
             print("conflicted_ims_files=", conflicted_ims_files)
+            print("' '.join(conflicted_ims_files)=", ' '.join(conflicted_ims_files))
             if conflicted_ims_files is not None:
                 print("WARNING: Found conflicting configuration. Reverting it...")
                 _run_git_command(f"git checkout --ours {' '.join(conflicted_ims_files)}")
@@ -46,6 +47,7 @@ def git_commit_and_push():
 
 
 def _run_git_command(cmd):
+    print(f"Running {cmd}")
     process = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
@@ -57,6 +59,7 @@ def _run_git_command(cmd):
     return output, error
 
 def _run_git_command_check_output(cmd):
+    print(f"Running {cmd}")
     return subprocess.check_output(
         cmd,
         shell=True,
