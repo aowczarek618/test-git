@@ -36,6 +36,7 @@ def git_commit_and_push():
                 r"CONFLICT \(content\): Merge conflict in (.*ims2)", str(pull_err.output))
             print("conflicted_ims=", conflicted_ims)
             if conflicted_ims is not None:
+                print("conflicted_ims.group(1)=",conflicted_ims.group(1))
                 print("WARNING: Found conflicting configuration. Reverting it...")
                 _run_git_command(f"git checkout --ours {conflicted_ims.group(1)}")
                 _run_git_command(f"git add {conflicted_ims.group(1)}")
