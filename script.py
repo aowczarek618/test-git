@@ -33,7 +33,7 @@ def git_commit_and_push():
             print("pull_err.stdout=", pull_err.stdout)
             print("pull_err.stderr=", pull_err.stderr)
             conflicted_ims = re.search(
-                r"CONFLICT \(content\): Merge conflict in (.*ims2)", str(pull_err.output))
+                r"^CONFLICT \(content\): Merge conflict in (.*ims2)$", str(pull_err.output))
             print("conflicted_ims=", conflicted_ims)
             if conflicted_ims is not None:
                 print("conflicted_ims.group(1)=",conflicted_ims.group(1))
