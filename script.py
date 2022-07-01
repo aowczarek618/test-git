@@ -33,7 +33,7 @@ def git_commit_and_push():
             print("pull_err.stdout=", pull_err.stdout)
             print("pull_err.stderr=", pull_err.stderr)
             conflicted_ims_files = re.findall(
-                r"CONFLICT \(content\): Merge conflict in (.*ims2)", str(pull_err.output))
+                r"CONFLICT \(content\): Merge conflict in (.*ims2)", pull_err.output.decode('utf-8'))
             print("conflicted_ims_files=", conflicted_ims_files)
             if conflicted_ims_files is not None:
                 print("WARNING: Found conflicting configuration. Reverting it...")
