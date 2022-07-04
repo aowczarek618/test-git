@@ -27,17 +27,10 @@ def git_commit_and_push():
         try:
             _run_git_command_check_output("git pull --rebase")
         except subprocess.CalledProcessError as pull_err:
-            print("pull_err.output=", pull_err.output)
-            print("pull_err.returncode=", pull_err.returncode)
-            print("pull_err.cmd=", pull_err.cmd)
-            print("pull_err.stdout=", pull_err.stdout)
-            print("pull_err.stderr=", pull_err.stderr)
             conflicted_ims_files = re.findall(
                 r"CONFLICT \(content\): Merge conflict in (.*ims2)", pull_err.output.decode('utf-8'))
-            print("conflicted_ims_files=", conflicted_ims_files)
-            print("' '.join(conflicted_ims_files)=", ' '.join(conflicted_ims_files))
             if conflicted_ims_files is not None:
-                print("WARNING: Found conflicting configuration. Reverting it...")
+                print("WARNING: Found conflicting configuration. Fixing the conflicts...")
                 _run_git_command(f"git checkout --ours {' '.join(conflicted_ims_files)}")
                 _run_git_command(f"git add {' '.join(conflicted_ims_files)}")
                 _run_git_command(f"GIT_EDITOR=true git rebase --continue")
